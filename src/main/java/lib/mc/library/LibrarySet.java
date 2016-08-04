@@ -23,9 +23,10 @@ import lib.mc.libraryutil.LibraryDownloader;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.io.File;
+import java.util.HashMap;
 
 public class LibrarySet {
 
@@ -33,27 +34,63 @@ public class LibrarySet {
 
     /**
      * Constructs a Library Set.
+     *
      * @param libraries The array of libraries from the JSON. It will try to determine the library type (Native, Forge, Jar)
      */
     public LibrarySet(JSONArray libraries) {
         for (Object o : libraries) {
             JSONObject library = (JSONObject) o;
+            DefaultMCLibraryObject dummy = new DefaultMCLibraryObject(library.getString("name"), "");
             if (!library.has("name"))
                 throw new IllegalArgumentException("Invalid JSON");
+            HashMap<String, String> versionMap = new HashMap<>();
             if (library.has("natives")) {
                 NativesRules nativesRules = new NativesRules(library.has("rules") ? library.getJSONArray("rules") : new JSONArray("[]"));
                 ExtractRules extractRules = new ExtractRules(library.getJSONObject("extract"));
                 this.libraries.add(new NativeMCLibraryObject(library.getString("name"), library.getString("sha1"), nativesRules, extractRules));
             } else if (!library.has("download") && (library.has("url") || library.has("serverreq") || library.has("clientreq") || library.has("checksum"))) {
-                this.libraries.add(new ForgeLibraryObject(library.getString("name"), library.has("url")));
+                ForgeLibraryObject forgeLibraryObject = new ForgeLibraryObject(library.getString("name"), library.has("url"));
+                if (versionMap.containsKey(dummy.parseName().getLibraryName())) {
+                    String existingVersion = versionMap.get(dummy.parseName().getLibraryName());
+                    int existing = Integer.parseInt(existingVersion.substring(0, existingVersion.indexOf(".")));
+                    String cV = forgeLibraryObject.parseName().getVersion();
+                    int current = Integer.parseInt(cV.substring(0, cV.indexOf(".")));
+                    if (!(current > existing)) continue;
+                }
+                versionMap.remove(forgeLibraryObject.parseName().getLibraryName());
+                versionMap.put(forgeLibraryObject.parseName().getLibraryName(), forgeLibraryObject.parseName().getVersion());
+
+                this.libraries.add(forgeLibraryObject);
             } else {
-                this.libraries.add(new DefaultMCLibraryObject(library.getString("name"), library.getString("sha1")));
+                System.out.println(library);
+                DefaultMCLibraryObject defaultMCLibraryObject = new DefaultMCLibraryObject(library.getString("name"), library.getJSONObject("downloads").getJSONObject("artifact").getString("sha1"));
+
+                if (versionMap.containsKey(dummy.parseName().getLibraryName())) {
+                    String existingVersion = versionMap.get(dummy.parseName().getLibraryName());
+                    int existing = Integer.parseInt(existingVersion.substring(0, existingVersion.indexOf(".")));
+                    String cV = defaultMCLibraryObject.parseName().getVersion();
+                    int current = Integer.parseInt(cV.substring(0, cV.indexOf(".")));
+                    if (!(current > existing)) continue;
+                }
+                versionMap.remove(defaultMCLibraryObject.parseName().getLibraryName());
+                versionMap.put(defaultMCLibraryObject.parseName().getLibraryName(), defaultMCLibraryObject.parseName().getVersion());
+
+                this.libraries.add(defaultMCLibraryObject);
             }
         }
     }
 
     /**
+     * Removes a library from the list
+     * @param object The library to remove
+     */
+    public void drop(LibraryObject object) {
+        libraries.remove(object);
+    }
+
+    /**
      * Download all the libraries to a given folder
+     *
      * @param to The folder to download to
      * @throws IOException If an IO operation failed
      */
