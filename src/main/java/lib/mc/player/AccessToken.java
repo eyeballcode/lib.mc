@@ -20,8 +20,8 @@
 package lib.mc.player;
 
 public class AccessToken {
-    String accessToken, clientToken;
-    Player player;
+    private String accessToken, clientToken;
+    private Player player;
 
     public AccessToken(String accessToken, String clientToken, Player player) {
         this.accessToken = accessToken;

@@ -20,23 +20,23 @@
 package lib.mc.mojang;
 
 import lib.mc.except.RateLimitedException;
-import lib.mc.http.HTTPGETRequest;
-import lib.mc.http.HTTPJSONResponse;
-import lib.mc.http.HTTPPOSTRequest;
-import lib.mc.player.Player;
-import lib.mc.player.SkinCapeInfo;
-import lib.mc.player.UsernameHistory;
-import lib.mc.player.UsernameUUIDStorage;
+import lib.mc.http.*;
+import lib.mc.player.*;
 import lib.mc.util.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 public class MojangAPI {
 
@@ -88,8 +88,9 @@ public class MojangAPI {
 
     /**
      * Gets the player UUID from a certain time
+     *
      * @param player The player
-     * @param time A java timestamp
+     * @param time   A java timestamp
      * @return The players' UUID
      * @throws IOException If the UUID could not be fetched
      */
@@ -185,6 +186,12 @@ public class MojangAPI {
         return getUUIDs(list);
     }
 
+    /**
+     * Gets the username history of a playerr
+     * @param player The player to lookup
+     * @return The username history
+     * @throws IOException If an IO operation failed
+     */
     public static UsernameHistory getUsernameHistory(Player player) throws IOException {
         UUID uuid = player.getUUID();
         HashMap<Long, String> times = new HashMap<>();
@@ -203,4 +210,32 @@ public class MojangAPI {
         }
         return new UsernameHistory(player, times);
     }
+
+    /**
+     *
+     * Sets the player's skin
+     * @param token The AccessToken
+     * @param newSkinURL The new skin URL
+     * @param preferredModel leave blank if unsure, use slim for alex
+     * @throws IOException If an IO operation failed
+     */
+    public static void setSkinViaURL(AccessToken token, URL newSkinURL, String preferredModel) throws IOException {
+        Player player = token.getPlayer();
+        HTTPPOSTRequest request = new HTTPPOSTRequest();
+        request.setContentType("application/x-www-form-urlencoded");
+        request.setParameter("Host", "api.mojang.com");
+        request.setParameter("User-Agent", "lib.mc/1.0.0");
+        request.setParameter("Accept", "*/*");
+        request.setParameter("Authorization", " Bearer " + token.getAccessToken());
+        URLEncodedFormPayload payload = new URLEncodedFormPayload();
+        payload.put("model", preferredModel == null ? "" : preferredModel);
+        payload.put("url", newSkinURL.toExternalForm());
+        String payloadString = payload.toString();
+        request.setParameter("Content-Length", String.valueOf(payloadString.length()));
+        request.setPayload(payloadString);
+        request.send(new URL("https://api.mojang.com/user/profile/" + player.getUUIDMCFormat() + "/skin"));
+        if (request.getResponse().getResponseCode() == 204) return;
+        throw new RuntimeException(new HTTPJSONResponse(request.getResponse()).toJSONObject().getString("errorMessage"));
+    }
+
 }

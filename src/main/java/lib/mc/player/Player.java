@@ -37,6 +37,7 @@ public class Player {
 
     /**
      * Checks if the account is demo
+     *
      * @return If the account is demo.
      */
     public boolean isDemo() {
@@ -45,6 +46,7 @@ public class Player {
 
     /**
      * Checks if the account is legacy
+     *
      * @return If the account is legacy
      */
     public boolean isLegacy() {
@@ -68,6 +70,11 @@ public class Player {
     public UUID getUUID() {
         return UUID.fromString(uuid);
     }
+
+    public String getUUIDMCFormat() {
+        return getUUID().toString().replaceAll("-", "");
+    }
+
 
     @Override
     public String toString() {

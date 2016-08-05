@@ -85,6 +85,7 @@ public class Authenticator {
 
     /**
      * Refreshes an Access token
+     *
      * @param accessTokenObj The access token
      * @return The new {@link AccessToken}
      * @throws IOException If an IO operation failed
@@ -109,6 +110,7 @@ public class Authenticator {
 
     /**
      * Checks if an access token is valid
+     *
      * @param accessTokenObj The access token
      * @return If its valid
      * @throws IOException If an IO operation failed
@@ -128,6 +130,7 @@ public class Authenticator {
 
     /**
      * Invalidates ALL {@link AccessToken}s
+     *
      * @param username The username
      * @param password The password
      * @return If it invalidated all access tokens successfully
@@ -144,7 +147,6 @@ public class Authenticator {
     }
 
     /**
-     *
      * Invalidates an {@link AccessToken}
      *
      * @param accessTokenObj The {@link AccessToken}
@@ -163,6 +165,33 @@ public class Authenticator {
         return request.getResponse().getResponseCode() == 204;
     }
 
+    /**
+     * Creates an AccessToken from a cache
+     * @param cache The JSON cache
+     * @return The AccessToken
+     * @see #genToCache(AccessToken)
+     */
+    public static AccessToken genFromCache(JSONObject cache) {
+        Player player = new Player(cache.getString("id"), cache.getString("name"), cache.getBoolean("legacy"), cache.getBoolean("demo"));
+        return new AccessToken(cache.getString("access"), cache.getString("client"), player);
+    }
+
+    /**
+     * Creates the cache for an AccessToken
+     * @param token The token to cache
+     * @return The cache
+     * @see #genFromCache(JSONObject)
+     */
+    public static JSONObject genToCache(AccessToken token) {
+        JSONObject object = new JSONObject();
+        object.put("access", token.getAccessToken());
+        object.put("client", token.getClientToken());
+        object.put("id", token.getPlayer().getUUIDMCFormat());
+        object.put("name", token.getPlayer().getName());
+        object.put("legacy", token.getPlayer().isLegacy());
+        object.put("demo", token.getPlayer().isDemo());
+        return object;
+    }
 
 }
 

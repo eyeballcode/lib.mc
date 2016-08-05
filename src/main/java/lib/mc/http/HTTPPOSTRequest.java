@@ -28,10 +28,10 @@ import java.util.Scanner;
 
 public class HTTPPOSTRequest extends HTTPRequest {
 
-    HashMap<String, String> params = new HashMap<>();
-    boolean sent = false;
-    HTTPResponse response;
-    String payload;
+    private HashMap<String, String> params = new HashMap<>();
+    private boolean sent = false;
+    private HTTPResponse response;
+    private String payload;
     private String contentType = "text/plain";
 
     public void setParameter(String key, String value) {
@@ -46,10 +46,10 @@ public class HTTPPOSTRequest extends HTTPRequest {
         connection.setDoInput(true);
 
         connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", contentType);
         for (String key : params.keySet()) {
             connection.setRequestProperty(key, params.get(key));
         }
+        connection.setRequestProperty("Content-Type", contentType);
         connection.getOutputStream().write('\n');
         connection.getOutputStream().write(payload.getBytes());
         connection.getOutputStream().close();
@@ -61,6 +61,7 @@ public class HTTPPOSTRequest extends HTTPRequest {
                 String response = new Scanner(connection.getInputStream()).useDelimiter("\\A").next();
                 this.response = new HTTPResponse(response, connection.getResponseCode());
             }
+            sent = true;
         } catch (IOException e) {
             if (e.getMessage().startsWith("Server returned HTTP response code: 4")) {
                 String response = new Scanner(connection.getErrorStream()).useDelimiter("\\A").next();
