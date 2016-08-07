@@ -1,6 +1,6 @@
 [submodule "Java-XZ"]
 	path = Java-XZ
-	url = https://github.com/eyeballcode/XZ-Java/
-[submodule "src/main/java/org/json"]
+	url = git@github.com:eyeballcode/XZ-Java.git
+[submodule "Java-JSON"]
 	path = src/main/java/org/json
 	url = git@github.com:stleary/JSON-java.git
