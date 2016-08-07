@@ -1,0 +1,3 @@
+[submodule "Java-XZ"]
+	path = Java-XZ
+	url = http://git.tukaani.org/xz-java.git
