@@ -144,7 +144,7 @@ public class Authenticator {
         payload.put("username", username);
         payload.put("password", password);
         request.setPayload(payload.toString());
-        request.setContentType("application/json")
+        request.setContentType("application/json");
         request.send(new URL("https://authserver.mojang.com/signout"));
         return request.getResponse().getResponseCode() == 204;
     }
