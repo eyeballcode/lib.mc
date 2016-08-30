@@ -103,9 +103,13 @@ public class Authenticator {
         request.setContentType("application/json");
         request.send(new URL("https://authserver.mojang.com/refresh"));
         HTTPJSONResponse response = new HTTPJSONResponse(request.getResponse());
-        String newAT = response.toJSONObject().getString("accessToken"),
-                ct = response.toJSONObject().getString("clientToken");
-        if (!ct.equals(clientToken)) throw new RuntimeException("Did not match client tokens!");
+        try {
+            String newAT = response.toJSONObject().getString("accessToken"),
+                   ct = response.toJSONObject().getString("clientToken");
+            if (!ct.equals(clientToken)) throw new RuntimeException("Did not match client tokens!");
+        } catch (JSONException e) {
+            throw new LoginException("Invalid access token!");
+        }
         return new AccessToken(newAT, clientToken, accessTokenObj.getPlayer());
     }
 
