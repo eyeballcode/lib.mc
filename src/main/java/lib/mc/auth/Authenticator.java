@@ -25,6 +25,7 @@ import lib.mc.http.HTTPPOSTRequest;
 import lib.mc.player.AccessToken;
 import lib.mc.player.Player;
 import org.json.JSONObject;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -107,10 +108,10 @@ public class Authenticator {
             String newAT = response.toJSONObject().getString("accessToken"),
                    ct = response.toJSONObject().getString("clientToken");
             if (!ct.equals(clientToken)) throw new RuntimeException("Did not match client tokens!");
+        return new AccessToken(newAT, clientToken, accessTokenObj.getPlayer());
         } catch (JSONException e) {
             throw new LoginException("Invalid access token!");
         }
-        return new AccessToken(newAT, clientToken, accessTokenObj.getPlayer());
     }
 
     /**
