@@ -43,7 +43,8 @@ public class GameVersionDownloader {
 
     /**
      * Downloads a minecraft version
-     * @param version The version to download
+     *
+     * @param version    The version to download
      * @param downloadTo The file to download to
      * @throws IOException If an IO operation failed
      */
@@ -56,10 +57,11 @@ public class GameVersionDownloader {
 
     /**
      * Gets a {@link GameVersion} for the given ID: 16w15a, a1.2.1_01
+     *
      * @param id The game ID
      * @return The {@link GameVersion} for that version
      * @throws NoSuchVersionException If the version is invalid
-     * @throws IOException If an IO operation failed
+     * @throws IOException            If an IO operation failed
      */
     public static StandardGameVersion forVersion(String id) throws NoSuchVersionException, IOException {
         downloadCacheIfNeeded();
@@ -68,4 +70,23 @@ public class GameVersionDownloader {
         return new StandardGameVersion(id, versionJSON.getString("type"), versionJSON.getString("releaseTime"));
     }
 
+    /**
+     * Downloads a minecraft version jar for the client.
+     * TODO: This method is a quickfix and needs to be improved.
+     *
+     * @param version The version to download
+     * @param to      The file to download to
+     * @throws IOException If an IO operation failed
+     */
+    public static void downloadGameVersionJar(StandardGameVersion version, File to) throws IOException {
+        downloadCacheIfNeeded();
+        JSONObject versionJSON = versionsList.getJSONObject(version.getVersion());
+        JSONObject versionData = new JSONObject(Downloader.wget(new URL(versionJSON.getString("url"))));
+        JSONObject downloadInfo = versionData.getJSONObject("downloads").getJSONObject("client");
+        String url = downloadInfo.getString("url");
+        Downloader.sha1Download(new URL(url), to, downloadInfo.getString("sha1"), 5);
+    }
+
+
 }
+
