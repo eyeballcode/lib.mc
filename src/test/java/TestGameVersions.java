@@ -34,6 +34,7 @@ public class TestGameVersions {
         System.out.println(version.getVersion());
         System.out.println(version.getReleaseTime());
         System.out.println(version.getType());
-        GameVersionDownloader.downloadVersion(version, new File("1.7.10.jar"));
+        GameVersionDownloader.downloadVersion(version, new File("1.7.10.json"));
+        GameVersionDownloader.downloadGameVersionJar(version, new File("1.7.10.jar"));
     }
 }
