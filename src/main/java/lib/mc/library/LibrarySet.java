@@ -100,4 +100,7 @@ public class LibrarySet {
         }
     }
 
+   public ArrayList<LibraryObject> getLibraries() {
+        return libraries;
+    }
 }
