@@ -46,7 +46,6 @@ public class LibrarySet {
                 throw new IllegalArgumentException("Invalid JSON");
             HashMap<String, String> versionMap = new HashMap<>();
             if (library.has("natives")) {
-                System.out.println(library.toString(4));
                 NativesRules nativesRules = new NativesRules(library.has("rules") ? library.getJSONArray("rules") : new JSONArray("[]"));
                 ExtractRules extractRules = new ExtractRules(library);
                 this.libraries.add(new NativeMCLibraryObject(library, nativesRules, extractRules));
