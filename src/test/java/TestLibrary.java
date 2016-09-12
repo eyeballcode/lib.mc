@@ -1,5 +1,6 @@
 import lib.mc.library.*;
 import lib.mc.libraryutil.LibraryDownloader;
+import lib.mc.util.Handler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -14,7 +15,7 @@ public class TestLibrary {
         dir.mkdir();
         JSONArray libs = new JSONObject(new JSONTokener(TestLibrary.class.getResourceAsStream("test_json_lib.json"))).getJSONArray("libraries");
         LibrarySet set = new LibrarySet(libs);
-        set.downloadAll(dir);
+        set.downloadAll(dir, new Handler.EmptyHandler());
     }
 
 }
