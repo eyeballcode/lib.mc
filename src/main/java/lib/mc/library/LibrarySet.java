@@ -20,6 +20,7 @@
 package lib.mc.library;
 
 import lib.mc.libraryutil.LibraryDownloader;
+import lib.mc.util.Handler;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -94,9 +95,10 @@ public class LibrarySet {
      * @param to The folder to download to
      * @throws IOException If an IO operation failed
      */
-    public void downloadAll(File to) throws IOException {
+    public void downloadAll(File to, Handler<LibraryObject> handler) throws IOException {
         for (LibraryObject libraryObject : libraries) {
             LibraryDownloader.downloadLibrary(libraryObject, to);
+            handler.handle(libraryObject);
         }
     }
 
@@ -104,3 +106,4 @@ public class LibrarySet {
         return libraries;
     }
 }
+
