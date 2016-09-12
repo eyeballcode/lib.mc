@@ -15,7 +15,7 @@ public class TestLibrary {
         dir.mkdir();
         JSONArray libs = new JSONObject(new JSONTokener(TestLibrary.class.getResourceAsStream("test_json_lib.json"))).getJSONArray("libraries");
         LibrarySet set = new LibrarySet(libs);
-        set.downloadAll(dir, new Handler.EmptyHandler());
+        set.downloadAll(dir, new Handler<LibraryObject>());
     }
 
 }

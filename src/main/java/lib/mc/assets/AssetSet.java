@@ -57,7 +57,7 @@ public class AssetSet {
      * @throws InvalidPathException If the path is invalid
      * @throws IOException          If an error occurred while downloading.
      */
-    public void download(File outputDir) throws InvalidPathException, IOException {
+    public void download(File outputDir, Handler<Asset> handler) throws InvalidPathException, IOException {
         if (!outputDir.isDirectory()) {
             throw new InvalidPathException("Path must be a directory");
         }
@@ -69,11 +69,8 @@ public class AssetSet {
             String id = hash.substring(0, 2);
             File outputFile = new File(new File(outputDir, id), hash);
             outputFile.getParentFile().mkdirs();
-            try {
-                Downloader.sha1Download(new URL("http://resources.download.minecraft.net/" + id + "/" + hash), outputFile, hash, 5);
-            } catch (MalformedURLException exception) {
-                //Should never happen
-            }
+            Downloader.sha1Download(new URL("http://resources.download.minecraft.net/" + id + "/" + hash), outputFile, hash, 5);
+            handler.handle(asset);
         }
     }
 
