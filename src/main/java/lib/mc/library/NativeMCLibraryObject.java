@@ -20,6 +20,9 @@
 
 package lib.mc.library;
 
+import lib.mc.util.Utils;
+import org.json.JSONObject;
+
 /**
  * A Library Object for standard minecraft packages.
  */
@@ -30,10 +33,14 @@ public class NativeMCLibraryObject extends LibraryObject {
     private NativesRules rules;
     private ExtractRules extractRules;
 
-    public NativeMCLibraryObject(String rawName, String sha1Sum, NativesRules rules, ExtractRules extractRules) {
-        this.rawName = rawName;
+    public NativeMCLibraryObject(JSONObject data, NativesRules rules, ExtractRules extractRules) {
+        this.rawName = data.getString("name");
         this.rules = rules;
-        this.sha1Sum = sha1Sum;
+        String os = "natives-" + Utils.OSUtils.getOS().name().toLowerCase();
+        JSONObject library = data.getJSONObject("downloads").getJSONObject("classifiers");
+        if (library.has(os)) {
+            this.sha1Sum = library.getJSONObject(os).getString("sha1");
+        }
         this.extractRules = extractRules;
     }
 

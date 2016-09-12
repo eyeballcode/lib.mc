@@ -46,9 +46,10 @@ public class LibrarySet {
                 throw new IllegalArgumentException("Invalid JSON");
             HashMap<String, String> versionMap = new HashMap<>();
             if (library.has("natives")) {
+                System.out.println(library.toString(4));
                 NativesRules nativesRules = new NativesRules(library.has("rules") ? library.getJSONArray("rules") : new JSONArray("[]"));
-                ExtractRules extractRules = new ExtractRules(library.getJSONObject("extract"));
-                this.libraries.add(new NativeMCLibraryObject(library.getString("name"), library.getString("sha1"), nativesRules, extractRules));
+                ExtractRules extractRules = new ExtractRules(library);
+                this.libraries.add(new NativeMCLibraryObject(library, nativesRules, extractRules));
             } else if (!library.has("download") && (library.has("url") || library.has("serverreq") || library.has("clientreq") || library.has("checksum"))) {
                 ForgeLibraryObject forgeLibraryObject = new ForgeLibraryObject(library.getString("name"), library.has("url"));
                 if (versionMap.containsKey(dummy.parseName().getLibraryName())) {
@@ -63,7 +64,6 @@ public class LibrarySet {
 
                 this.libraries.add(forgeLibraryObject);
             } else {
-                System.out.println(library);
                 DefaultMCLibraryObject defaultMCLibraryObject = new DefaultMCLibraryObject(library.getString("name"), library.getJSONObject("downloads").getJSONObject("artifact").getString("sha1"));
 
                 if (versionMap.containsKey(dummy.parseName().getLibraryName())) {
