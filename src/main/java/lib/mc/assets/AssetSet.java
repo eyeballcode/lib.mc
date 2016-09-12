@@ -21,6 +21,7 @@ package lib.mc.assets;
 
 import lib.mc.except.InvalidPathException;
 import lib.mc.util.Downloader;
+import lib.mc.util.Handler;
 import org.json.JSONObject;
 
 import java.io.File;

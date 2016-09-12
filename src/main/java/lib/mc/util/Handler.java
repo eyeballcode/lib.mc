@@ -26,14 +26,7 @@ public abstract class Handler<T> {
      *
      * @param object The object
      */
-    public abstract void handle(T object);
+    public void handle(T object) {};
 
-    public static class EmptyHandler extends Handler {
-
-        @Override
-        public void handle(Object object) {
-
-        }
-    }
 }
 
