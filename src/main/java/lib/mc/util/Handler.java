@@ -19,7 +19,7 @@
 
 package lib.mc.util;
 
-public abstract class Handler<T> {
+public class Handler<T> {
 
     /**
      * Handles an action

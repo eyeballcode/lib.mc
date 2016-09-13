@@ -59,11 +59,12 @@ public class Downloader {
      * @param outputFile The output file to write to
      * @param sha1Sum    The SHA1SUM of the file being downloaded
      * @param tries      The number of attempts before giving up.
-     * @return The number of tries needed to download. -1 if the file was not downloaded properly
-     * @throws IOException If an error occurred while downloading
+     * @return The number of tries needed to download.
+     * @throws IOException If an error occurred while downloading, or the file SHA did not match the given SHA after the specified number of tries
      */
     public static int sha1Download(URL location, File outputFile, String sha1Sum, int tries) throws IOException {
         if (outputFile.exists()) {
+
             if (ChecksumUtils.calcSHA1Sum(outputFile).equals(sha1Sum)) {
                 return 0;
             }
@@ -76,7 +77,7 @@ public class Downloader {
                 return i;
             }
         }
-        return -1;
+        throw new IOException("Failed to download " + location);
     }
 
     public static String wget(URL location) throws IOException {

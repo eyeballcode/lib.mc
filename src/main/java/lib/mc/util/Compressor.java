@@ -43,10 +43,13 @@ public class Compressor {
         while (entries.hasMoreElements()) {
             current = entries.nextElement();
             if (rules.isExcluded(current.getName())) continue;
-            if (current.isDirectory()) new File(to, current.getName()).mkdirs();
+            File dest = new File(to, current.getName());
+            if (current.isDirectory()) dest.mkdirs();
+            dest.getParentFile().mkdirs();
             InputStream inputStream = zipFile.getInputStream(current);
             ReadableByteChannel rbc = Channels.newChannel(inputStream);
-            FileOutputStream fos = new FileOutputStream(new File(to, current.getName()));
+
+            FileOutputStream fos = new FileOutputStream(dest);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
             fos.close();
         }
