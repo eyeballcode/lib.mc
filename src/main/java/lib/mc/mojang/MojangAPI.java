@@ -26,15 +26,7 @@ import lib.mc.util.Utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -83,7 +75,7 @@ public class MojangAPI {
         }
         String rawUUID = response.toJSONObject().getString("id");
         String parsedUUID = Utils.parseUUID(rawUUID);
-        return new Player(parsedUUID, response.toJSONObject().getString("name"), response.toJSONObject().has("legacy"), response.toJSONObject().has("demo"));
+        return new Player(parsedUUID, response.toJSONObject().getString("name"), response.toJSONObject().has("legacy"), response.toJSONObject().has("demo"), null);
     }
 
     /**

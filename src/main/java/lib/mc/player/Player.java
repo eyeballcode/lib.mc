@@ -27,12 +27,28 @@ public class Player {
 
     private String uuid, name;
     private boolean legacy, demo;
+    private UserData userData;
 
-    public Player(String id, String name, boolean legacy, boolean demo) {
+    public Player(String id, String name, boolean legacy, boolean demo, UserData userData) {
         uuid = Utils.parseUUID(id.replaceAll("-", ""));
         this.name = name;
         this.legacy = legacy;
         this.demo = demo;
+        this.userData = userData;
+    }
+
+    /**
+     *
+     * Gets the user properties:
+     *
+     * {
+     *     twitch_access_token: "Blah"
+     * }
+     *
+     * @return The user data
+     */
+    public UserData getUserData() {
+        return userData;
     }
 
     /**

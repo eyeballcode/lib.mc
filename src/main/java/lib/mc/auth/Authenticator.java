@@ -24,6 +24,7 @@ import lib.mc.http.HTTPJSONResponse;
 import lib.mc.http.HTTPPOSTRequest;
 import lib.mc.player.AccessToken;
 import lib.mc.player.Player;
+import lib.mc.player.UserData;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -62,6 +63,7 @@ public class Authenticator {
         payload.put("agent", new JSONObject().put("name", "Minecraft").put("version", 1));
         payload.put("username", username);
         payload.put("password", password);
+        payload.put("requestUser", true);
         String expectedToken = (clientToken == null ? UUID.randomUUID().toString() : clientToken);
         payload.put("clientToken", expectedToken);
         request.setPayload(payload.toString());
@@ -78,10 +80,14 @@ public class Authenticator {
         String foundToken = respPayload.getString("clientToken");
         if (!foundToken.equals(expectedToken)) throw new RuntimeException("Did not match client tokens!");
         JSONObject profile = respPayload.getJSONObject("selectedProfile");
+        JSONObject userDataJSON = respPayload.getJSONObject("user");
+
         String uuid = profile.getString("id"),
                 name = profile.getString("name");
-        //noinspection SimplifiableConditionalExpression
-        return new AccessToken(accessToken, expectedToken, new Player(uuid, name, profile.has("legacy"), profile.has("demo")));
+
+        UserData userData = new UserData(userDataJSON);
+
+        return new AccessToken(accessToken, expectedToken, new Player(uuid, name, profile.has("legacy"), profile.has("demo"), userData));
     }
 
     /**
@@ -181,7 +187,7 @@ public class Authenticator {
      * @see #genToCache(AccessToken)
      */
     public static AccessToken genFromCache(JSONObject cache) {
-        Player player = new Player(cache.getString("id"), cache.getString("name"), cache.getBoolean("legacy"), cache.getBoolean("demo"));
+        Player player = new Player(cache.getString("id"), cache.getString("name"), cache.getBoolean("legacy"), cache.getBoolean("demo"), null);
         return new AccessToken(cache.getString("access"), cache.getString("client"), player);
     }
 
