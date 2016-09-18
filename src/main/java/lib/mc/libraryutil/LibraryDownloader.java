@@ -25,11 +25,14 @@ import lib.mc.util.ChecksumUtils;
 import lib.mc.util.Compressor;
 import lib.mc.util.Downloader;
 import lib.mc.util.Utils;
+import org.tukaani.xz.XZInputStream;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 /**
  * A class to help download libraries, and unpack them as needed.
@@ -71,7 +74,13 @@ public class LibraryDownloader {
             return;
         }
         if (sha1Sum == null) {
-            Downloader.download(urlObj, outputFile);
+            outputFile.renameTo(new File(outputFile.getParentFile(), outputFile.getName() + "_"));
+            try {
+                Downloader.download(urlObj, outputFile);
+                new File(outputFile.getParentFile(), outputFile.getName() + "_").delete();
+            } catch (UnknownHostException e) {
+                new File(outputFile.getParentFile(), outputFile.getName() + "_").renameTo(outputFile);
+            }
         } else {
             int tries = Downloader.sha1Download(urlObj, outputFile, sha1Sum, 5);
             if (tries == -1) {

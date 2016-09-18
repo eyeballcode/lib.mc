@@ -19,6 +19,7 @@
 
 import lib.mc.assets.AssetSet;
 import lib.mc.assets.Asset;
+import lib.mc.util.Handler;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -31,6 +32,6 @@ public class TestAsset {
         AssetSet assetSet = new AssetSet(new JSONObject(new JSONTokener(TestAsset.class.getResourceAsStream("/1.7.10_assets.json"))));
         File outputDir = new File("assets/");
         outputDir.mkdir();
-        assetSet.download(outputDir, new Handler<Asset>();
+        assetSet.download(outputDir, new Handler<Asset>());
     }
 }

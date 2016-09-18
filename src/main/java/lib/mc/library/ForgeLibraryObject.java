@@ -27,10 +27,12 @@ public class ForgeLibraryObject extends LibraryObject {
 
     private String rawName;
     private boolean isForgeLib;
+    String sha1;
 
-    public ForgeLibraryObject(String rawName, boolean isForgeLib) {
+    public ForgeLibraryObject(String rawName, boolean isForgeLib, String sha1) {
         this.rawName = rawName;
         this.isForgeLib = isForgeLib;
+        this.sha1 = sha1;
     }
 
     public boolean isForgeLib() {
@@ -59,6 +61,6 @@ public class ForgeLibraryObject extends LibraryObject {
 
     @Override
     public String getSHA1Sum() {
-        return null;
+        return sha1;
     }
 }

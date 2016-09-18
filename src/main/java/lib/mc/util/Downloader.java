@@ -64,7 +64,6 @@ public class Downloader {
      */
     public static int sha1Download(URL location, File outputFile, String sha1Sum, int tries) throws IOException {
         if (outputFile.exists()) {
-
             if (ChecksumUtils.calcSHA1Sum(outputFile).equals(sha1Sum)) {
                 return 0;
             }

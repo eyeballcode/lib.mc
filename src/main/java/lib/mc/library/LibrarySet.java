@@ -50,7 +50,7 @@ public class LibrarySet {
                 ExtractRules extractRules = new ExtractRules(library);
                 this.libraries.add(new NativeMCLibraryObject(library, nativesRules, extractRules));
             } else if (!library.has("download") && (library.has("url") || library.has("serverreq") || library.has("clientreq") || library.has("checksum"))) {
-                ForgeLibraryObject forgeLibraryObject = new ForgeLibraryObject(library.getString("name"), library.has("url"));
+                ForgeLibraryObject forgeLibraryObject = new ForgeLibraryObject(library.getString("name"), library.has("url"), library.has("sha1") ? library.getString("sha1") : null);
                 if (versionMap.containsKey(dummy.parseName().getLibraryName())) {
                     String existingVersion = versionMap.get(dummy.parseName().getLibraryName());
                     int existing = Integer.parseInt(existingVersion.substring(0, existingVersion.indexOf(".")));
@@ -82,6 +82,7 @@ public class LibrarySet {
 
     /**
      * Removes a library from the list
+     *
      * @param object The library to remove
      */
     public void drop(LibraryObject object) {
@@ -101,7 +102,7 @@ public class LibrarySet {
         }
     }
 
-   public ArrayList<LibraryObject> getLibraries() {
+    public ArrayList<LibraryObject> getLibraries() {
         return libraries;
     }
 }
