@@ -11,6 +11,7 @@ public class UserData {
     private JSONArray data;
 
     public UserData(JSONObject userDataJSON) {
+        if (!userDataJSON.has("properties")) return;
         JSONArray props = userDataJSON.getJSONArray("properties");
         for (Object _ : props) {
             JSONObject propertySet = (JSONObject) _;
