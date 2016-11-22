@@ -34,7 +34,7 @@ public class UsernameUUIDStorage {
     public UsernameUUIDStorage(JSONArray respArray) {
         for (Object n : respArray) {
             JSONObject user = (JSONObject) n;
-            Player player = new Player(user.getString("id"), user.getString("name"), user.has("legacy"), user.has("demo"), null);
+            Player player = new Player(user.getString("id"), user.has("username") ? user.getString("username") : "", user.getString("name"), user.has("legacy"), user.has("demo"), null);
             data.put(user.getString("name"), player);
         }
     }

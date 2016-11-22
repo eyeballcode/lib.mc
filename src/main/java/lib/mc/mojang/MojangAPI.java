@@ -75,7 +75,7 @@ public class MojangAPI {
         }
         String rawUUID = response.toJSONObject().getString("id");
         String parsedUUID = Utils.parseUUID(rawUUID);
-        return new Player(parsedUUID, response.toJSONObject().getString("name"), response.toJSONObject().has("legacy"), response.toJSONObject().has("demo"), null);
+        return new Player(parsedUUID, username, response.toJSONObject().getString("name"), response.toJSONObject().has("legacy"), response.toJSONObject().has("demo"), null);
     }
 
     /**

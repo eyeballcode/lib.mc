@@ -180,33 +180,5 @@ public class Authenticator {
         return request.getResponse().getResponseCode() == 204;
     }
 
-    /**
-     * Creates an LoginSession from a cache
-     * @param cache The JSON cache
-     * @return The LoginSession
-     * @see #genToCache(LoginSession)
-     */
-    public static LoginSession genFromCache(JSONObject cache) {
-        Player player = new Player(cache.getString("id"), cache.getString("name"), cache.getBoolean("legacy"), cache.getBoolean("demo"), null);
-        return new LoginSession(cache.getString("access"), cache.getString("client"), player);
-    }
-
-    /**
-     * Creates the cache for an LoginSession
-     * @param session The session to cache
-     * @return The cache
-     * @see #genFromCache(JSONObject)
-     */
-    public static JSONObject genToCache(LoginSession session) {
-        JSONObject object = new JSONObject();
-        object.put("access", session.getAccessToken());
-        object.put("client", session.getClientToken());
-        object.put("id", session.forPlayer().getUUIDMCFormat());
-        object.put("name", session.forPlayer().getName());
-        object.put("legacy", session.forPlayer().isLegacy());
-        object.put("demo", session.forPlayer().isDemo());
-        return object;
-    }
-
 }
 
