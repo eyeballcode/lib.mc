@@ -19,11 +19,11 @@
 
 package lib.mc.player;
 
-public class AccessToken {
+public class LoginSession {
     private String accessToken, clientToken;
     private Player player;
 
-    public AccessToken(String accessToken, String clientToken, Player player) {
+    public LoginSession(String accessToken, String clientToken, Player player) {
         this.accessToken = accessToken;
         this.clientToken = clientToken;
         this.player = player;
@@ -49,7 +49,7 @@ public class AccessToken {
      * The player this access token is for
      * @return The player
      */
-    public Player getPlayer() {
+    public Player forPlayer() {
         return player;
     }
 

@@ -206,13 +206,13 @@ public class MojangAPI {
     /**
      *
      * Sets the player's skin
-     * @param token The AccessToken
+     * @param token The LoginSession
      * @param newSkinURL The new skin URL
      * @param preferredModel leave blank if unsure, use slim for alex
      * @throws IOException If an IO operation failed
      */
-    public static void setSkinViaURL(AccessToken token, URL newSkinURL, String preferredModel) throws IOException {
-        Player player = token.getPlayer();
+    public static void setSkinViaURL(LoginSession token, URL newSkinURL, String preferredModel) throws IOException {
+        Player player = token.forPlayer();
         HTTPPOSTRequest request = new HTTPPOSTRequest();
         request.setContentType("application/x-www-form-urlencoded");
         request.setParameter("Host", "api.mojang.com");

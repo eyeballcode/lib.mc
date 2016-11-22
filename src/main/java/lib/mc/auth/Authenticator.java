@@ -22,7 +22,7 @@ package lib.mc.auth;
 import lib.mc.except.LoginException;
 import lib.mc.http.HTTPJSONResponse;
 import lib.mc.http.HTTPPOSTRequest;
-import lib.mc.player.AccessToken;
+import lib.mc.player.LoginSession;
 import lib.mc.player.Player;
 import lib.mc.player.UserData;
 import org.json.JSONObject;
@@ -39,11 +39,11 @@ public class Authenticator {
      *
      * @param username The username. Email for mojang accounts. Use email or username for old legacy accounts.
      * @param password The password
-     * @return A {@link AccessToken} storing the login info.
+     * @return A {@link LoginSession} storing the login info.
      * @throws IOException    If an IO operation failed
      * @throws LoginException If the username or password is incorrect
      */
-    public static AccessToken login(String username, String password) throws IOException, LoginException {
+    public static LoginSession login(String username, String password) throws IOException, LoginException {
         return login(username, password, null);
     }
 
@@ -53,11 +53,11 @@ public class Authenticator {
      * @param username    The username
      * @param password    The password
      * @param clientToken A client token. Use null or {@link #login(String, String)} for default client token.
-     * @return A {@link AccessToken} storing the login info
+     * @return A {@link LoginSession} storing the login info
      * @throws IOException    If an IO operation failed
      * @throws LoginException If the username or password is incorrect
      */
-    public static AccessToken login(String username, String password, String clientToken) throws IOException, LoginException {
+    public static LoginSession login(String username, String password, String clientToken) throws IOException, LoginException {
         HTTPPOSTRequest request = new HTTPPOSTRequest();
         JSONObject payload = new JSONObject();
         payload.put("agent", new JSONObject().put("name", "Minecraft").put("version", 1));
@@ -87,22 +87,22 @@ public class Authenticator {
 
         UserData userData = new UserData(userDataJSON);
 
-        return new AccessToken(accessToken, expectedToken, new Player(uuid, name, profile.has("legacy"), profile.has("demo"), userData));
+        return new LoginSession(accessToken, expectedToken, new Player(uuid, name, profile.has("legacy"), profile.has("demo"), userData));
     }
 
     /**
      * Refreshes an Access token
      *
-     * @param accessTokenObj The access token
-     * @return The new {@link AccessToken}
+     * @param loginSessionObj The access token
+     * @return The new {@link LoginSession}
      * @throws IOException If an IO operation failed
      */
-    public static AccessToken refresh(AccessToken accessTokenObj) throws IOException {
+    public static LoginSession refresh(LoginSession loginSessionObj) throws IOException {
         HTTPPOSTRequest request = new HTTPPOSTRequest();
         JSONObject payload = new JSONObject();
-        String accessToken = accessTokenObj.getAccessToken(),
-                clientToken = accessTokenObj.getClientToken();
-        Player player = accessTokenObj.getPlayer();
+        String accessToken = loginSessionObj.getAccessToken(),
+                clientToken = loginSessionObj.getClientToken();
+        Player player = loginSessionObj.forPlayer();
         payload.put("accessToken", accessToken);
         payload.put("clientToken", clientToken == null ? "Minecraft" : clientToken);
         payload.put("selectedProfile", new JSONObject().put("id", player.getUUID().toString().replaceAll("-", "")).put("name", player.getName()));
@@ -114,7 +114,7 @@ public class Authenticator {
             String newAT = response.toJSONObject().getString("accessToken"),
                    ct = response.toJSONObject().getString("clientToken");
             if (!ct.equals(clientToken)) throw new RuntimeException("Did not match client tokens!");
-        return new AccessToken(newAT, clientToken, accessTokenObj.getPlayer());
+        return new LoginSession(newAT, clientToken, loginSessionObj.forPlayer());
         } catch (JSONException e) {
             throw new LoginException("Invalid access token!");
         }
@@ -123,16 +123,16 @@ public class Authenticator {
     /**
      * Checks if an access token is valid
      *
-     * @param accessTokenObj The access token
+     * @param loginSessionObj The access token
      * @return If its valid
      * @throws IOException If an IO operation failed
      */
-    public static boolean validate(AccessToken accessTokenObj) throws IOException {
+    public static boolean validate(LoginSession loginSessionObj) throws IOException {
         HTTPPOSTRequest request = new HTTPPOSTRequest();
         JSONObject payload = new JSONObject();
-        String accessToken = accessTokenObj.getAccessToken(),
-                clientToken = accessTokenObj.getClientToken();
-        Player player = accessTokenObj.getPlayer();
+        String accessToken = loginSessionObj.getAccessToken(),
+                clientToken = loginSessionObj.getClientToken();
+        Player player = loginSessionObj.forPlayer();
         payload.put("accessToken", accessToken);
         payload.put("clientToken", clientToken == null ? "Minecraft" : clientToken);
         request.setPayload(payload.toString());
@@ -142,7 +142,7 @@ public class Authenticator {
     }
 
     /**
-     * Invalidates ALL {@link AccessToken}s
+     * Invalidates ALL {@link LoginSession}s
      *
      * @param username The username
      * @param password The password
@@ -161,17 +161,17 @@ public class Authenticator {
     }
 
     /**
-     * Invalidates an {@link AccessToken}
+     * Invalidates an {@link LoginSession}
      *
-     * @param accessTokenObj The {@link AccessToken}
+     * @param loginSessionObj The {@link LoginSession}
      * @return If it was invalidated successfully
      * @throws IOException If an IO operation failed
      */
-    public static boolean invalidate(AccessToken accessTokenObj) throws IOException {
+    public static boolean invalidate(LoginSession loginSessionObj) throws IOException {
         HTTPPOSTRequest request = new HTTPPOSTRequest();
         JSONObject payload = new JSONObject();
-        String accessToken = accessTokenObj.getAccessToken(),
-                clientToken = accessTokenObj.getClientToken();
+        String accessToken = loginSessionObj.getAccessToken(),
+                clientToken = loginSessionObj.getClientToken();
         payload.put("accessToken", accessToken);
         payload.put("clientToken", clientToken == null ? "Minecraft" : clientToken);
         request.setPayload(payload.toString());
@@ -181,30 +181,30 @@ public class Authenticator {
     }
 
     /**
-     * Creates an AccessToken from a cache
+     * Creates an LoginSession from a cache
      * @param cache The JSON cache
-     * @return The AccessToken
-     * @see #genToCache(AccessToken)
+     * @return The LoginSession
+     * @see #genToCache(LoginSession)
      */
-    public static AccessToken genFromCache(JSONObject cache) {
+    public static LoginSession genFromCache(JSONObject cache) {
         Player player = new Player(cache.getString("id"), cache.getString("name"), cache.getBoolean("legacy"), cache.getBoolean("demo"), null);
-        return new AccessToken(cache.getString("access"), cache.getString("client"), player);
+        return new LoginSession(cache.getString("access"), cache.getString("client"), player);
     }
 
     /**
-     * Creates the cache for an AccessToken
-     * @param token The token to cache
+     * Creates the cache for an LoginSession
+     * @param session The session to cache
      * @return The cache
      * @see #genFromCache(JSONObject)
      */
-    public static JSONObject genToCache(AccessToken token) {
+    public static JSONObject genToCache(LoginSession session) {
         JSONObject object = new JSONObject();
-        object.put("access", token.getAccessToken());
-        object.put("client", token.getClientToken());
-        object.put("id", token.getPlayer().getUUIDMCFormat());
-        object.put("name", token.getPlayer().getName());
-        object.put("legacy", token.getPlayer().isLegacy());
-        object.put("demo", token.getPlayer().isDemo());
+        object.put("access", session.getAccessToken());
+        object.put("client", session.getClientToken());
+        object.put("id", session.forPlayer().getUUIDMCFormat());
+        object.put("name", session.forPlayer().getName());
+        object.put("legacy", session.forPlayer().isLegacy());
+        object.put("demo", session.forPlayer().isDemo());
         return object;
     }
 

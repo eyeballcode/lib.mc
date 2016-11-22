@@ -19,7 +19,7 @@
 
 import lib.mc.auth.Authenticator;
 import lib.mc.except.LoginException;
-import lib.mc.player.AccessToken;
+import lib.mc.player.LoginSession;
 import lib.mc.player.Player;
 
 import java.io.Console;
@@ -42,10 +42,10 @@ public class TestLogin {
             } else {
                 password = String.valueOf(console.readPassword());
             }
-            AccessToken token = Authenticator.login(password, username);
+            LoginSession token = Authenticator.login(username, password);
             System.out.println("AT: " + token.getAccessToken());
             System.out.println("CT: " + token.getClientToken());
-            Player player = token.getPlayer();
+            Player player = token.forPlayer();
             System.out.println("UUID: " + player.getUUID());
             System.out.println("Name: " + player.getName());
             System.out.println("Legacy: " + player.isLegacy());
