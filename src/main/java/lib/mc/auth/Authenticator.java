@@ -87,7 +87,7 @@ public class Authenticator {
 
         UserData userData = new UserData(userDataJSON);
 
-        return new LoginSession(accessToken, expectedToken, new Player(uuid, name, profile.has("legacy"), profile.has("demo"), userData));
+        return new LoginSession(accessToken, expectedToken, new Player(uuid, username, name, profile.has("legacy"), profile.has("demo"), userData));
     }
 
     /**

@@ -25,16 +25,25 @@ import java.util.UUID;
 
 public class Player {
 
-    private String uuid, name;
+    private String uuid, name, username;
     private boolean legacy, demo;
     private UserData userData;
 
-    public Player(String id, String name, boolean legacy, boolean demo, UserData userData) {
+    public Player(String id, String username, String name, boolean legacy, boolean demo, UserData userData) {
         uuid = Utils.parseUUID(id.replaceAll("-", ""));
         this.name = name;
         this.legacy = legacy;
         this.demo = demo;
         this.userData = userData;
+        this.username = username;
+    }
+
+    /**
+     * Gets the player's username (Usually email)
+     * @return
+     */
+    public String getUsername() {
+        return username;
     }
 
     /**
@@ -70,7 +79,7 @@ public class Player {
     }
 
     /**
-     * Get the player name
+     * Get the player's display name (Usually something like Eyeballcode)
      *
      * @return The player name
      */
