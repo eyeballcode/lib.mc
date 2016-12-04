@@ -36,7 +36,7 @@ public class Utils {
     }
 
     public enum OS {
-        WINDOWS, MACOSX, LINUX
+        WINDOWS, OSX, LINUX
     }
 
     public static class OSUtils {
@@ -50,7 +50,7 @@ public class Utils {
             if (os.contains("win"))
                 return OS.WINDOWS;
             else if (os.contains("mac"))
-                return OS.MACOSX;
+                return OS.OSX;
             else if (os.contains("linux"))
                 return OS.LINUX;
             else return OS.WINDOWS;
